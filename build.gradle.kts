@@ -7,6 +7,7 @@ plugins {
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://nexus.prgm.in/repository/maven-public/")
     maven("https://mvn.exceptionflug.de/repository/exceptionflug-public/")
 }
 
