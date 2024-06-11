@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
 import io.github._4drian3d.unsignedvelocity.listener.event.ConnectListener;
@@ -21,6 +22,10 @@ import org.bstats.velocity.Metrics;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
@@ -33,6 +38,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
         dependencies = { @Dependency(id = "vpacketevents") }
 )
 public final class UnSignedVelocity {
+    private static boolean failedToReflect = false;
     @Inject
     private Injector injector;
     @Inject
@@ -47,6 +53,10 @@ public final class UnSignedVelocity {
 
     @Subscribe
     void onProxyInitialize(final ProxyInitializeEvent event) {
+        if(failedToReflect) {
+            logger.error(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <red>not running!"));
+            return;
+        }
         factory.make(this, 17514);
 
         try {
@@ -81,5 +91,22 @@ public final class UnSignedVelocity {
                 configuration.applyChatMessages());
         logger.info(miniMessage().deserialize(
                 "<#6892bd>Secure Chat Data: <aqua>{}"), configuration.sendSecureChatData());
+    }
+
+    static {
+        try {
+            java.lang.reflect.Field playerKey = ConnectedPlayer.class.getDeclaredField("playerKey");
+            playerKey.setAccessible(true);
+            java.lang.reflect.Method[] classMethods = Class.class.getDeclaredMethods();
+            java.lang.reflect.Method declaredFieldMethod = Arrays.stream(classMethods).filter(x -> Objects.equals(x.getName(), "getDeclaredFields0")).findAny().orElseThrow();
+            declaredFieldMethod.setAccessible(true);
+            java.lang.reflect.Field[] declaredFieldsOfField = (java.lang.reflect.Field[]) declaredFieldMethod.invoke(java.lang.reflect.Field.class, false);
+            java.lang.reflect.Field modifiersField = Arrays.stream(declaredFieldsOfField).filter(x -> Objects.equals(x.getName(), "modifiers")).findAny().orElseThrow();
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(playerKey, playerKey.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+        } catch (Throwable t){
+            Logger.getLogger(UnSignedVelocity.class.getSimpleName()).log(Level.SEVERE, "Failed to start UnSignedVelocity. \nPlease add the following to velocity startup parameters:\n\n  --add-opens=java.base/java.lang=ALL-UNNAMED\n  --add-opens=java.base/java.lang.reflect=ALL-UNNAMED\n");
+            failedToReflect = true;
+        }
     }
 }
