@@ -31,7 +31,6 @@ public class ConnectListener implements EventListener {
         if (player.getIdentifiedKey() != null) {
             java.lang.reflect.Field playerKey = ConnectedPlayer.class.getDeclaredField("playerKey");
             playerKey.set(player, null);
-            //KEY_SETTER.invoke(player, null);
         }
     }
 

@@ -32,8 +32,11 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 @Plugin(
         id = "unsignedvelocity",
-        name = "UnSignedVelocity",
-        authors = {"4drian3d"},
+        name = "UnSignedVelocity (Unofficial)",
+        authors = {
+                "4drian3d",
+                "proferabg"
+        },
         version = Constants.VERSION,
         dependencies = { @Dependency(id = "vpacketevents") }
 )
@@ -54,7 +57,7 @@ public final class UnSignedVelocity {
     @Subscribe
     void onProxyInitialize(final ProxyInitializeEvent event) {
         if(failedToReflect) {
-            logger.error(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <red>not running!"));
+            logger.error(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <red>(Unofficial) not running!"));
             return;
         }
         factory.make(this, 17514);
@@ -82,7 +85,7 @@ public final class UnSignedVelocity {
         .forEach(EventListener::register);
 
         logger.info(miniMessage().deserialize(
-                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
+                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <red>(Unofficial) <#6892bd>has been successfully loaded"));
         logger.info(miniMessage().deserialize(
                 "<#6892bd>Remove Signed Key: <aqua>{}"), configuration.removeSignedKey());
         logger.info(miniMessage().deserialize(
