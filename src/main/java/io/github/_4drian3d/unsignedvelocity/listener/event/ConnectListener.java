@@ -10,8 +10,7 @@ import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.lang.reflect.Field;
 
 public class ConnectListener implements EventListener {
 
@@ -29,8 +28,10 @@ public class ConnectListener implements EventListener {
         }
         final Player player = event.getPlayer();
         if (player.getIdentifiedKey() != null) {
-            java.lang.reflect.Field playerKey = ConnectedPlayer.class.getDeclaredField("playerKey");
+            Field playerKey = ConnectedPlayer.class.getDeclaredField("playerKey");
+            playerKey.setAccessible(true);
             playerKey.set(player, null);
+            playerKey.setAccessible(false);
         }
     }
 
